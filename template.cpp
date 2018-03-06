@@ -6,10 +6,14 @@
 
 // Namespace
 using namespace AGK;
+
+// game rules
 #define CAMERASPEED 8
 #define INPUTDELAY 10
 #define GRID_SIZE 10
 #define TILE_SIZE 50
+
+// renaming key codes
 #define KEY_W 87
 #define KEY_S 83
 #define KEY_A 65
@@ -57,7 +61,7 @@ void app::moveCursor(int up, int down, int left, int right) {
 		if (!(cursorX == selectX.size() - 1 && cursorY == selectY.size() - 1)) {
 			selectX.push_back(cursorX);
 			selectY.push_back(cursorY);
-			agk::SetSpriteColorRed(grid[cursorX][cursorY], 200);
+			agk::SetSpriteColorRed(grid[cursorX][cursorY], 150);
 		}
 	}
 }
@@ -65,7 +69,7 @@ void app::moveCursor(int up, int down, int left, int right) {
 // put stuff here you want to run at the beginning when the game loads up
 void app::Begin(void){
 
-	// allows a console to show up, mostly for debugging
+	// allows a console to show up, mostly for debugging. Allows use of std::cout
 	/*
 	AllocConsole();
 	AttachConsole(GetCurrentProcessId());
@@ -121,7 +125,7 @@ int app::Loop (void){
 		else {
 			selectX.push_back(cursorX);
 			selectY.push_back(cursorY);
-			agk::SetSpriteColorRed(grid[selectX[selectX.size() - 1]][selectY[selectY.size() - 1]], 200);
+			agk::SetSpriteColorRed(grid[selectX[selectX.size() - 1]][selectY[selectY.size() - 1]], 150);
 		}
 	}
 
