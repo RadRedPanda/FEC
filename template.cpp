@@ -12,6 +12,10 @@ using namespace AGK;
 #define INPUTDELAY 10
 #define GRID_SIZE 10
 #define TILE_SIZE 50
+#define CONSOLE true
+// C:/Users/Kevin/AppData/Local/AGKApps/My Company/Template64/ write path
+// C:/Users/Kevin/Documents/AGKStuff/CPP stuff/apps/FEC/Final/ read path
+
 
 // renaming key codes
 #define KEY_W 87
@@ -73,11 +77,11 @@ void app::moveCursor(int up, int down, int left, int right) {
 void app::Begin(void){
 
 	// allows a console to show up, mostly for debugging. Allows use of std::cout
-	/*
-	AllocConsole();
-	AttachConsole(GetCurrentProcessId());
-	freopen("CON", "w", stdout);
-	*/
+	if (CONSOLE) {
+		AllocConsole();
+		AttachConsole(GetCurrentProcessId());
+		freopen("CON", "w", stdout);
+	}
 
 	// setup, gotta fix this later
 	agk::SetVirtualResolution (1024, 768);
@@ -88,8 +92,8 @@ void app::Begin(void){
 	// sets up the grid
 	grid.resize(GRID_SIZE, std::vector<UINT>(GRID_SIZE, 1));
 	cursorX = cursorY = 0;
-	for (int y = 0; y < (int)grid[0].size(); y++)
-		for (int x = 0; x < (int)grid.size(); x++) {
+	for (int y = 0; y < (int)grid[0].size(); y+=1)
+		for (int x = 0; x < (int)grid.size(); x+=1) {
 			grid[x][y] = agk::CreateSprite(0);
 			agk::SetSpriteSize(grid[x][y], TILE_SIZE, TILE_SIZE);
 			agk::SetSpritePosition(grid[x][y], x * (TILE_SIZE + 1.0f), y * (TILE_SIZE + 1.0f));
@@ -107,6 +111,8 @@ void app::Begin(void){
 	inputBuffer = 0;
 	holdDown = false;
 	selected = false;
+
+	std::cout << "Write Path: " << agk::GetWritePath() << std::endl << "Read Path: " << agk::GetReadPath() << std::endl;
 }
 
 // put stuff here you want to run every frame
