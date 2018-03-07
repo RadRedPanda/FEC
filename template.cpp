@@ -95,7 +95,7 @@ void app::Begin(void){
 			agk::SetSpritePosition(grid[x][y], x * (TILE_SIZE + 1.0f), y * (TILE_SIZE + 1.0f));
 			agk::SetSpriteColor(grid[x][y], 255, 255, 255, 255);
 		}
-
+	
 	// chooses sprite for cursor, it should be in the /Final folder
 	cursorSprite = agk::CreateSprite(agk::LoadImage("cursor.png"));
 	agk::SetSpritePosition(cursorSprite, 0, 0);
@@ -119,7 +119,6 @@ int app::Loop (void){
 	if (agk::GetRawKeyPressed(SPACE_BAR)) {
 		selected = !selected;
 		if (!selected) {
-			std::cout << selectX.size();
 			while (selectX.size() > 0) {
 				agk::SetSpriteColorRed(grid[selectX[selectX.size() - 1]][selectY[selectY.size() - 1]], 255);
 				selectX.pop_back();

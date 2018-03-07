@@ -5,7 +5,7 @@ public:
 	player();
 	~player();
 	bool playerTurn();
-	void playerIdle(bool waiting);
+	void playerIdle(bool turn);
 private:
 	int playerNumber;
 	int power;
