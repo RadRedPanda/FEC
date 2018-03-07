@@ -48,17 +48,20 @@ void app::moveCursor(int up, int down, int left, int right) {
 
 	// space bar stuff. This does the snake thingy
 	if (selected) {
+		int cross = -1;
 		for (int i = (int)selectX.size() - 2; i >= 0; i--) {
 			if (cursorX == selectX[i] && cursorY == selectY[i]) {
-				for (int j = selectX.size() - 1; j >= i; j--){
-					agk::SetSpriteColorRed(grid[selectX[j]][selectY[j]], 255);
-					selectX.pop_back();
-					selectY.pop_back();
-				}
+				cross = i;
 				break;
 			}
 		}
-		if (!(cursorX == selectX.size() - 1 && cursorY == selectY.size() - 1)) {
+		if(cross >= 0)
+			for (int j = selectX.size() - 1; j > cross; j--) {
+				agk::SetSpriteColorRed(grid[selectX[j]][selectY[j]], 255);
+				selectX.pop_back();
+				selectY.pop_back();
+			}
+		else if (cursorX != selectX[selectX.size() - 1] || cursorY != selectY[selectY.size() - 1]) {
 			selectX.push_back(cursorX);
 			selectY.push_back(cursorY);
 			agk::SetSpriteColorRed(grid[cursorX][cursorY], 150);
@@ -110,6 +113,7 @@ void app::Begin(void){
 int app::Loop (void){
 	// will print out the code for the last key pressed in the top left (might have to move the map to see it)
 	agk::Print(agk::GetRawLastKey());
+	agk::Print(selected);
 
 	// allows the user to toggle selection
 	if (agk::GetRawKeyPressed(SPACE_BAR)) {
