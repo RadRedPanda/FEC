@@ -3,6 +3,8 @@
 
 // Link to GDK libraries
 #include "AGK.h"
+#include "map.h"
+#include "player.h"
 
 #define DEVICE_WIDTH 1024
 #define DEVICE_HEIGHT 768
@@ -27,6 +29,7 @@ public:
 private:
 	void moveCursor(int up, int down, int left, int right);
 	std::vector<std::vector<UINT>> grid;
+	map currentMap;
 	int cursorX, cursorY;
 	std::vector<int> selectX, selectY;
 	UINT cursorSprite;

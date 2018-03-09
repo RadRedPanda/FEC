@@ -1,6 +1,9 @@
 #include "map.h"
 
 map::map(){
+	sizeX = sizeY = 10;
+	terrainMap.resize(sizeX, std::vector<int>(sizeY, 0));
+	unitMap.resize(sizeX, std::vector<int>(sizeY, 0));
 }
 
 map::~map(){
@@ -12,10 +15,10 @@ void map::loadMap(std::string fileName) {
 	int file = agk::OpenToRead(fileName.c_str());
 	sizeX = agk::ReadInteger(file);
 	sizeY = agk::ReadInteger(file);
-	terrain.resize(sizeX, std::vector<int>(sizeY, 0));
+	terrainMap.resize(sizeX, std::vector<int>(sizeY, 0));
 	for (int y = 0; y < sizeY; y+=1)
 		for (int x = 0; x < sizeX; x+=1)
-			terrain[x][y] = agk::ReadInteger(file);
+			terrainMap[x][y] = agk::ReadInteger(file);
 	agk::CloseFile(file);
 }
 
@@ -25,5 +28,5 @@ void map::saveMap(std::string fileName) {
 	agk::WriteInteger(file, sizeY);
 	for (int y = 0; y < sizeY; y+=1)
 		for (int x = 0; x < sizeX; x+=1)
-			agk::WriteInteger(file, terrain[x][y]);
+			agk::WriteInteger(file, terrainMap[x][y]);
 }

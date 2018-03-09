@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "unit.h"
 #include "agk.h"
 
 class map
@@ -11,8 +12,8 @@ public:
 	void saveMap(std::string fileName);
 private:
 	int sizeX, sizeY;
-	std::vector<std::vector<int>> terrain;
-	std::vector<std::vector<int>> units;
+	std::vector<std::vector<int>> terrainMap;
+	std::vector<std::vector<int>> unitMap;
 	int weather;
 	bool FoW;
 	int playerTurn;

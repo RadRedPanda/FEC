@@ -12,7 +12,7 @@ using namespace AGK;
 #define INPUTDELAY 10
 #define GRID_SIZE 10
 #define TILE_SIZE 50
-#define CONSOLE true
+#define CONSOLE false
 // C:/Users/Kevin/AppData/Local/AGKApps/My Company/Template64/ write path
 // C:/Users/Kevin/Documents/AGKStuff/CPP stuff/apps/FEC/Final/ read path
 
@@ -60,7 +60,7 @@ void app::moveCursor(int up, int down, int left, int right) {
 			}
 		}
 		if(cross >= 0)
-			for (int j = selectX.size() - 1; j > cross; j--) {
+			for (int j = (int)selectX.size() - 1; j > cross; j--) {
 				agk::SetSpriteColorRed(grid[selectX[j]][selectY[j]], 255);
 				selectX.pop_back();
 				selectY.pop_back();
