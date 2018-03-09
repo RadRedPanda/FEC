@@ -8,14 +8,17 @@ class map
 public:
 	map();
 	~map();
+	std::vector<std::vector<int>> getTerrain();
+	int getSizeX();
+	int getSizeY();
+	int getCoord(int x, int y);
 	void loadMap(std::string fileName);
 	void saveMap(std::string fileName);
 private:
 	int sizeX, sizeY;
 	std::vector<std::vector<int>> terrainMap;
-	std::vector<std::vector<int>> unitMap;
+	std::vector<std::vector<unit>> unitMap;
 	int weather;
 	bool FoW;
 	int playerTurn;
 };
-

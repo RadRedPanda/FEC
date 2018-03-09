@@ -10,9 +10,8 @@ using namespace AGK;
 // game rules
 #define CAMERASPEED 8
 #define INPUTDELAY 10
-#define GRID_SIZE 10
 #define TILE_SIZE 50
-#define CONSOLE false
+#define CONSOLE true
 // C:/Users/Kevin/AppData/Local/AGKApps/My Company/Template64/ write path
 // C:/Users/Kevin/Documents/AGKStuff/CPP stuff/apps/FEC/Final/ read path
 
@@ -30,49 +29,6 @@ using namespace AGK;
 
 app App;
 
-// function to read inputs so I don't have to type it out every time
-void app::moveCursor(int up, int down, int left, int right) {
-	// if not moving just return
-	if (!(up || down || left || right))
-		return;
-
-	// moves cursor
-	cursorX += right - left;
-	cursorY += down - up;
-
-	// bounds the cursor so it doesn't go off grid
-	if (cursorX >= GRID_SIZE)
-		cursorX = GRID_SIZE - 1;
-	if (cursorY >= GRID_SIZE)
-		cursorY = GRID_SIZE - 1;
-	if (cursorX < 0)
-		cursorX = 0;
-	if (cursorY < 0)
-		cursorY = 0;
-
-	// space bar stuff. This does the snake thingy
-	if (selected) {
-		int cross = -1;
-		for (int i = (int)selectX.size() - 2; i >= 0; i--) {
-			if (cursorX == selectX[i] && cursorY == selectY[i]) {
-				cross = i;
-				break;
-			}
-		}
-		if(cross >= 0)
-			for (int j = (int)selectX.size() - 1; j > cross; j--) {
-				agk::SetSpriteColorRed(grid[selectX[j]][selectY[j]], 255);
-				selectX.pop_back();
-				selectY.pop_back();
-			}
-		else if (cursorX != selectX[selectX.size() - 1] || cursorY != selectY[selectY.size() - 1]) {
-			selectX.push_back(cursorX);
-			selectY.push_back(cursorY);
-			agk::SetSpriteColorRed(grid[cursorX][cursorY], 150);
-		}
-	}
-}
-
 // put stuff here you want to run at the beginning when the game loads up
 void app::Begin(void){
 
@@ -89,19 +45,23 @@ void app::Begin(void){
 	agk::SetSyncRate(30,0);
 	agk::SetScissor(0,0,0,0);
 
+	// map setup
+	currentMap = map();
+
 	// sets up the grid
-	grid.resize(GRID_SIZE, std::vector<UINT>(GRID_SIZE, 1));
+	grid.resize(currentMap.getSizeX(), std::vector<UINT>(currentMap.getSizeY(), 0));
 	cursorX = cursorY = 0;
-	for (int y = 0; y < (int)grid[0].size(); y+=1)
-		for (int x = 0; x < (int)grid.size(); x+=1) {
-			grid[x][y] = agk::CreateSprite(0);
+	for (int x = 0; x < (int)grid.size(); x+=1)
+		for (int y = 0; y < (int)grid[0].size(); y+=1) {
+			grid[x][y] = agk::CreateSprite(0);//agk::LoadImage("/sprites/terrain/"+currentMap.getCoord(x, y)));
 			agk::SetSpriteSize(grid[x][y], TILE_SIZE, TILE_SIZE);
 			agk::SetSpritePosition(grid[x][y], x * (TILE_SIZE + 1.0f), y * (TILE_SIZE + 1.0f));
 			agk::SetSpriteColor(grid[x][y], 255, 255, 255, 255);
 		}
-	
+
+	std::cout << "who" << std::endl;
 	// chooses sprite for cursor, it should be in the /Final folder
-	cursorSprite = agk::CreateSprite(agk::LoadImage("cursor.png"));
+	cursorSprite = agk::CreateSprite(agk::LoadImage("/sprites/cursor.png"));
 	agk::SetSpritePosition(cursorSprite, 0, 0);
 
 	// sets sprite depth. Most sprites will start at depth 15 I think, lower depths will show up on top
@@ -174,4 +134,47 @@ int app::Loop (void){
 // put code here that you want to run when the game closes
 void app::End (void){
 
+}
+
+// function to read inputs so I don't have to type it out every time
+void app::moveCursor(int up, int down, int left, int right) {
+	// if not moving just return
+	if (!(up || down || left || right))
+		return;
+
+	// moves cursor
+	cursorX += right - left;
+	cursorY += down - up;
+
+	// bounds the cursor so it doesn't go off grid
+	if (cursorX >= currentMap.getSizeX())
+		cursorX = currentMap.getSizeX() - 1;
+	if (cursorY >= currentMap.getSizeY())
+		cursorY = currentMap.getSizeY() - 1;
+	if (cursorX < 0)
+		cursorX = 0;
+	if (cursorY < 0)
+		cursorY = 0;
+
+	// space bar stuff. This does the snake thingy
+	if (selected) {
+		int cross = -1;
+		for (int i = (int)selectX.size() - 2; i >= 0; i--) {
+			if (cursorX == selectX[i] && cursorY == selectY[i]) {
+				cross = i;
+				break;
+			}
+		}
+		if (cross >= 0)
+			for (int j = (int)selectX.size() - 1; j > cross; j--) {
+				agk::SetSpriteColorRed(grid[selectX[j]][selectY[j]], 255);
+				selectX.pop_back();
+				selectY.pop_back();
+			}
+		else if (cursorX != selectX[selectX.size() - 1] || cursorY != selectY[selectY.size() - 1]) {
+			selectX.push_back(cursorX);
+			selectY.push_back(cursorY);
+			agk::SetSpriteColorRed(grid[cursorX][cursorY], 150);
+		}
+	}
 }

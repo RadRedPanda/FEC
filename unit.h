@@ -3,12 +3,15 @@ class unit
 {
 public:
 	unit();
-	unit(int xPos, int yPos);
+	unit(int type, int team);
 	~unit();
-
+	int getId();
+	int getTeam();
 private:
-	int x;
-	int y;
+	int id;
+	int moveDistance;
+	int attackRange;
+	bool attackAndMove;
 	int health;
 	bool turn;
 	int team;
