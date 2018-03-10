@@ -1,10 +1,10 @@
 #include "map.h"
 
 map::map(){
-	sizeX = 10;
-	sizeY = 10;
-	terrainMap.resize(sizeX, std::vector<int>(sizeY, 1));
-	unitMap.resize(sizeX, std::vector<unit>(sizeY, unit()));
+	size.x = 10;
+	size.y = 10;
+	terrainMap.resize(size.x, std::vector<int>(size.y, 1));
+	unitMap.resize(size.x, std::vector<unit>(size.y, unit()));
 	weather = 0;
 	FoW = false;
 	playerTurn = 1;
@@ -19,34 +19,34 @@ std::vector<std::vector<int>> map::getTerrain() {
 }
 
 int map::getSizeX() {
-	return sizeX;
+	return size.x;
 }
 
 int map::getSizeY() {
-	return sizeY;
+	return size.y;
 }
 
-int map::getCoord(int x, int y) {
-	return terrainMap[x][y];
+int map::getCoord(coord c) {
+	return terrainMap[c.x][c.y];
 }
 
-unit map::getUnitOn(int x, int y) {
-	return unitMap[x][y];
+unit map::getUnitOn(coord c) {
+	return unitMap[c.x][c.y];
 }
 
-void map::setUnitOn(int x, int y, int id) {
-	unitMap[x][y] = unit(id, 1);
+void map::setUnitOn(coord c, int id) {
+	unitMap[c.x][c.y] = unit(id, 1);
 }
 
 void map::loadMap(std::string fileName) {
 	if (!agk::GetFileExists(fileName.c_str()))
 		return;
 	int file = agk::OpenToRead(fileName.c_str());
-	sizeX = agk::ReadInteger(file);
-	sizeY = agk::ReadInteger(file);
-	terrainMap.resize(sizeX, std::vector<int>(sizeY, 0));
-	for (int y = 0; y < sizeY; y+=1)
-		for (int x = 0; x < sizeX; x += 1) {
+	size.x = agk::ReadInteger(file);
+	size.y = agk::ReadInteger(file);
+	terrainMap.resize(size.x, std::vector<int>(size.y, 0));
+	for (int y = 0; y < size.y; y+=1)
+		for (int x = 0; x < size.x; x += 1) {
 			terrainMap[x][y] = agk::ReadInteger(file);
 			unitMap[x][y] = unit(agk::ReadInteger(file), agk::ReadInteger(file));
 		}
@@ -55,10 +55,10 @@ void map::loadMap(std::string fileName) {
 
 void map::saveMap(std::string fileName) {
 	int file = agk::OpenToWrite(fileName.c_str());
-	agk::WriteInteger(file, sizeX);
-	agk::WriteInteger(file, sizeY);
-	for (int y = 0; y < sizeY; y+=1)
-		for (int x = 0; x < sizeX; x += 1) {
+	agk::WriteInteger(file, size.x);
+	agk::WriteInteger(file, size.y);
+	for (int y = 0; y < size.y; y+=1)
+		for (int x = 0; x < size.x; x += 1) {
 			agk::WriteInteger(file, terrainMap[x][y]);
 			agk::WriteInteger(file, unitMap[x][y].getId());
 			agk::WriteInteger(file, unitMap[x][y].getTeam());

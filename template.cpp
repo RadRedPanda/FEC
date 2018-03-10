@@ -78,7 +78,10 @@ void app::Begin(void){
 	gridSprites.resize(currentMap.getSizeX(), std::vector<UINT>(currentMap.getSizeY(), 0));
 	for (int x = 0; x < (int)gridSprites.size(); x += 1)
 		for (int y = 0; y < (int)gridSprites[0].size(); y += 1) {
-			gridSprites[x][y] = agk::CreateSprite(terrainImages[currentMap.getCoord(x, y)]);
+			coord c;
+			c.x = x;
+			c.y = y;
+			gridSprites[x][y] = agk::CreateSprite(terrainImages[currentMap.getCoord(c)]);
 			agk::SetSpriteSize(gridSprites[x][y], TILE_SIZE, TILE_SIZE);
 			agk::SetSpritePosition(gridSprites[x][y], x * (TILE_SIZE + 1.0f), y * (TILE_SIZE + 1.0f));
 			agk::SetSpriteColor(gridSprites[x][y], 255, 255, 255, 255);
@@ -88,7 +91,10 @@ void app::Begin(void){
 	unitSprites.resize(currentMap.getSizeX(), std::vector<UINT>(currentMap.getSizeY(), 0));
 	for (int x = 0; x < (int)unitSprites.size(); x += 1)
 		for (int y = 0; y < (int)unitSprites[0].size(); y += 1) {
-			unitSprites[x][y] = agk::CreateSprite(unitImages[currentMap.getUnitOn(x, y).getId()]);
+			coord c;
+			c.x = x;
+			c.y = y;
+			unitSprites[x][y] = agk::CreateSprite(unitImages[currentMap.getUnitOn(c).getId()]);
 			agk::SetSpriteSize(unitSprites[x][y], TILE_SIZE, TILE_SIZE);
 			agk::SetSpritePosition(unitSprites[x][y], x * (TILE_SIZE + 1.0f), y * (TILE_SIZE + 1.0f));
 			agk::SetSpriteColor(unitSprites[x][y], 255, 255, 255, 255);
@@ -97,7 +103,7 @@ void app::Begin(void){
 		}
 
 	// chooses sprite for cursor, it should be in the /Final folder
-	cursorX = cursorY = 0;
+	cursor.x = cursor.y = 0;
 	cursorSprite = agk::CreateSprite(agk::LoadImage("/sprites/cursor.png"));
 	agk::SetSpritePosition(cursorSprite, 0, 0);
 
@@ -116,12 +122,12 @@ void app::Begin(void){
 int app::Loop (void){
 	// will print out the code for the last key pressed in the top left (might have to move the map to see it)
 	agk::Print(agk::GetRawLastKey());
-	agk::Print(currentMap.getUnitOn(cursorX, cursorY).getId());
+	agk::Print(currentMap.getUnitOn(cursor).getId());
 
 	// whenever a number is pressed sets its unit id to that number
 	if (agk::GetRawKeyPressed(48) || agk::GetRawKeyPressed(49) || agk::GetRawKeyPressed(50) || agk::GetRawKeyPressed(51) || agk::GetRawKeyPressed(52) || agk::GetRawKeyPressed(53) || agk::GetRawKeyPressed(54) || agk::GetRawKeyPressed(55) || agk::GetRawKeyPressed(56) || agk::GetRawKeyPressed(57)) {
-		currentMap.setUnitOn(cursorX, cursorY, agk::GetRawLastKey() - 48);
-		updateUnitSprite(cursorX, cursorY);
+		currentMap.setUnitOn(cursor, agk::GetRawLastKey() - 48);
+		updateUnitSprite(cursor);
 	}
 
 	// allows the user to toggle selection
@@ -135,9 +141,9 @@ int app::Loop (void){
 			selected = false;
 		}
 		else {
-			if (currentMap.getUnitOn(cursorX, cursorY).getId() > 0) {	// only toggles if the spot contains a unit, need to check if correct player later
-				selectX.push_back(cursorX);
-				selectY.push_back(cursorY);
+			if (currentMap.getUnitOn(cursor).getId() > 0) {	// only toggles if the spot contains a unit, need to check if correct player later
+				selectX.push_back(cursor.x);
+				selectY.push_back(cursor.y);
 				agk::SetSpriteColorRed(gridSprites[selectX[selectX.size() - 1]][selectY[selectY.size() - 1]], 150);
 				selected = true;
 			}
@@ -168,7 +174,7 @@ int app::Loop (void){
 	}
 	
 	// sets the cursor sprite
-	agk::SetSpritePosition(cursorSprite, agk::GetSpriteX(gridSprites[cursorX][cursorY]), agk::GetSpriteY(gridSprites[cursorX][cursorY]));
+	agk::SetSpritePosition(cursorSprite, agk::GetSpriteX(gridSprites[cursor.x][cursor.y]), agk::GetSpriteY(gridSprites[cursor.x][cursor.y]));
 	
 	// don't touch this
 	agk::Sync();
@@ -189,24 +195,24 @@ void app::moveCursor(int up, int down, int left, int right) {
 		return;
 
 	// moves cursor
-	cursorX += right - left;
-	cursorY += down - up;
+	cursor.x += right - left;
+	cursor.y += down - up;
 
 	// bounds the cursor so it doesn't go off grid
-	if (cursorX >= currentMap.getSizeX())
-		cursorX = currentMap.getSizeX() - 1;
-	if (cursorY >= currentMap.getSizeY())
-		cursorY = currentMap.getSizeY() - 1;
-	if (cursorX < 0)
-		cursorX = 0;
-	if (cursorY < 0)
-		cursorY = 0;
+	if (cursor.x >= currentMap.getSizeX())
+		cursor.x = currentMap.getSizeX() - 1;
+	if (cursor.y >= currentMap.getSizeY())
+		cursor.y = currentMap.getSizeY() - 1;
+	if (cursor.x < 0)
+		cursor.x = 0;
+	if (cursor.y < 0)
+		cursor.y = 0;
 
 	// space bar stuff. This does the snake thingy
 	if (selected) {
 		int cross = -1;
 		for (int i = (int)selectX.size() - 2; i >= 0; i-=1) {
-			if (cursorX == selectX[i] && cursorY == selectY[i]) {
+			if (cursor.x == selectX[i] && cursor.y == selectY[i]) {
 				cross = i;
 				break;
 			}
@@ -217,15 +223,15 @@ void app::moveCursor(int up, int down, int left, int right) {
 				selectX.pop_back();
 				selectY.pop_back();
 			}
-		else if (cursorX != selectX[selectX.size() - 1] || cursorY != selectY[selectY.size() - 1]) {
-			selectX.push_back(cursorX);
-			selectY.push_back(cursorY);
-			agk::SetSpriteColorRed(gridSprites[cursorX][cursorY], 150);
+		else if (cursor.x != selectX[selectX.size() - 1] || cursor.y != selectY[selectY.size() - 1]) {
+			selectX.push_back(cursor.x);
+			selectY.push_back(cursor.y);
+			agk::SetSpriteColorRed(gridSprites[cursor.x][cursor.y], 150);
 		}
 	}
 }
 
-void app::updateUnitSprite(int x, int y) {
-	agk::SetSpriteVisible(unitSprites[x][y], currentMap.getUnitOn(x, y).getId() > 0);
-	agk::SetSpriteImage(unitSprites[x][y], unitImages[currentMap.getUnitOn(x, y).getId()]);
+void app::updateUnitSprite(coord c) {
+	agk::SetSpriteVisible(unitSprites[c.x][c.y], currentMap.getUnitOn(c).getId() > 0);
+	agk::SetSpriteImage(unitSprites[c.x][c.y], unitImages[currentMap.getUnitOn(c).getId()]);
 }
