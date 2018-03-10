@@ -1,7 +1,7 @@
 #include "unit.h"
 
 unit::unit(){
-
+	id = 0;
 }
 
 unit::unit(int type, int color) {
@@ -13,7 +13,8 @@ unit::unit(int type, int color) {
 		break;
 	case 1: // basic unit
 		health = 100;
-		moveDistance = 5;
+		moveDistance = 3;
+		sightRange = 5;
 		attackAndMove = true;
 		attackRange = 1;
 		break;

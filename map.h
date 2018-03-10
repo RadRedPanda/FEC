@@ -12,6 +12,8 @@ public:
 	int getSizeX();
 	int getSizeY();
 	int getCoord(int x, int y);
+	unit getUnitOn(int x, int y);
+	void setUnitOn(int x, int y, int id);
 	void loadMap(std::string fileName);
 	void saveMap(std::string fileName);
 private:

@@ -11,6 +11,7 @@ private:
 	int id;
 	int moveDistance;
 	int attackRange;
+	int sightRange;
 	bool attackAndMove;
 	int health;
 	bool turn;

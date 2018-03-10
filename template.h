@@ -28,7 +28,10 @@ public:
 	void End( void );
 private:
 	void moveCursor(int up, int down, int left, int right);
-	std::vector<std::vector<UINT>> grid;
+	void updateUnitSprite(int x, int y);
+	std::vector<std::vector<UINT>> gridSprites;
+	std::vector<std::vector<UINT>> unitSprites;
+	std::vector<UINT> images;
 	map currentMap;
 	int cursorX, cursorY;
 	std::vector<int> selectX, selectY;

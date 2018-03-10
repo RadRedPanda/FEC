@@ -1,7 +1,8 @@
 #include "map.h"
 
 map::map(){
-	sizeX = sizeY = 10;
+	sizeX = 10;
+	sizeY = 10;
 	terrainMap.resize(sizeX, std::vector<int>(sizeY, 0));
 	unitMap.resize(sizeX, std::vector<unit>(sizeY, unit()));
 	weather = 0;
@@ -27,6 +28,14 @@ int map::getSizeY() {
 
 int map::getCoord(int x, int y) {
 	return terrainMap[x][y];
+}
+
+unit map::getUnitOn(int x, int y) {
+	return unitMap[x][y];
+}
+
+void map::setUnitOn(int x, int y, int id) {
+	unitMap[x][y] = unit(id, 1);
 }
 
 void map::loadMap(std::string fileName) {
