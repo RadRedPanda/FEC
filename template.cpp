@@ -81,7 +81,7 @@ void app::Begin(void){
 			gridSprites[x][y] = agk::CreateSprite(terrainImages[currentMap.getCoord(x, y)]);
 			agk::SetSpriteSize(gridSprites[x][y], TILE_SIZE, TILE_SIZE);
 			agk::SetSpritePosition(gridSprites[x][y], x * (TILE_SIZE + 1.0f), y * (TILE_SIZE + 1.0f));
-			agk::SetSpriteColor(gridSprites[x][y], 50, 50, 50, 255);
+			agk::SetSpriteColor(gridSprites[x][y], 255, 255, 255, 255);
 			agk::SetSpriteDepth(gridSprites[x][y], 15);
 		}
 
