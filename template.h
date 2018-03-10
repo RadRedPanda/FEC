@@ -31,7 +31,8 @@ private:
 	void updateUnitSprite(int x, int y);
 	std::vector<std::vector<UINT>> gridSprites;
 	std::vector<std::vector<UINT>> unitSprites;
-	std::vector<UINT> images;
+	std::vector<UINT> terrainImages;
+	std::vector<UINT> unitImages;
 	map currentMap;
 	int cursorX, cursorY;
 	std::vector<int> selectX, selectY;

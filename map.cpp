@@ -3,7 +3,7 @@
 map::map(){
 	sizeX = 10;
 	sizeY = 10;
-	terrainMap.resize(sizeX, std::vector<int>(sizeY, 0));
+	terrainMap.resize(sizeX, std::vector<int>(sizeY, 1));
 	unitMap.resize(sizeX, std::vector<unit>(sizeY, unit()));
 	weather = 0;
 	FoW = false;
@@ -63,4 +63,8 @@ void map::saveMap(std::string fileName) {
 			agk::WriteInteger(file, unitMap[x][y].getId());
 			agk::WriteInteger(file, unitMap[x][y].getTeam());
 		}
+}
+
+int map::getTurn() {
+	return playerTurn;
 }

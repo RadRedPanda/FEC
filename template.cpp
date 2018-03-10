@@ -49,7 +49,19 @@ void app::Begin(void){
 	currentMap = map();
 
 	// preload images
-	images = {
+	terrainImages = {
+		agk::LoadImageResized(("/sprites/terrain/0.png"), TILE_SIZE, TILE_SIZE, 0),
+		agk::LoadImageResized(("/sprites/terrain/1.png"), TILE_SIZE, TILE_SIZE, 0),
+		agk::LoadImageResized(("/sprites/terrain/2.png"), TILE_SIZE, TILE_SIZE, 0),
+		agk::LoadImageResized(("/sprites/terrain/3.png"), TILE_SIZE, TILE_SIZE, 0),
+		agk::LoadImageResized(("/sprites/terrain/4.png"), TILE_SIZE, TILE_SIZE, 0),
+		agk::LoadImageResized(("/sprites/terrain/5.png"), TILE_SIZE, TILE_SIZE, 0),
+		agk::LoadImageResized(("/sprites/terrain/6.png"), TILE_SIZE, TILE_SIZE, 0),
+		agk::LoadImageResized(("/sprites/terrain/7.png"), TILE_SIZE, TILE_SIZE, 0),
+		agk::LoadImageResized(("/sprites/terrain/8.png"), TILE_SIZE, TILE_SIZE, 0),
+		agk::LoadImageResized(("/sprites/terrain/9.png"), TILE_SIZE, TILE_SIZE, 0)
+	};
+	unitImages = {
 		agk::LoadImageResized(("/sprites/units/0.png"), TILE_SIZE, TILE_SIZE, 0),
 		agk::LoadImageResized(("/sprites/units/1.png"), TILE_SIZE, TILE_SIZE, 0),
 		agk::LoadImageResized(("/sprites/units/2.png"), TILE_SIZE, TILE_SIZE, 0),
@@ -66,20 +78,20 @@ void app::Begin(void){
 	gridSprites.resize(currentMap.getSizeX(), std::vector<UINT>(currentMap.getSizeY(), 0));
 	for (int x = 0; x < (int)gridSprites.size(); x += 1)
 		for (int y = 0; y < (int)gridSprites[0].size(); y += 1) {
-			gridSprites[x][y] = agk::CreateSprite(0);//agk::LoadImage("/sprites/terrain/" + currentMap.getCoord(x, y) + ".png"));
+			gridSprites[x][y] = agk::CreateSprite(terrainImages[currentMap.getCoord(x, y)]);
 			agk::SetSpriteSize(gridSprites[x][y], TILE_SIZE, TILE_SIZE);
 			agk::SetSpritePosition(gridSprites[x][y], x * (TILE_SIZE + 1.0f), y * (TILE_SIZE + 1.0f));
-			agk::SetSpriteColor(gridSprites[x][y], 255, 255, 255, 255);
+			agk::SetSpriteColor(gridSprites[x][y], 50, 50, 50, 255);
 			agk::SetSpriteDepth(gridSprites[x][y], 15);
 		}
 
 	unitSprites.resize(currentMap.getSizeX(), std::vector<UINT>(currentMap.getSizeY(), 0));
 	for (int x = 0; x < (int)unitSprites.size(); x += 1)
 		for (int y = 0; y < (int)unitSprites[0].size(); y += 1) {
-			unitSprites[x][y] = agk::CreateSprite(0);//agk::LoadImage("/sprites/units/" + currentMap.getUnitOn(x, y).getId() + ".png"));
+			unitSprites[x][y] = agk::CreateSprite(unitImages[currentMap.getUnitOn(x, y).getId()]);
 			agk::SetSpriteSize(unitSprites[x][y], TILE_SIZE, TILE_SIZE);
 			agk::SetSpritePosition(unitSprites[x][y], x * (TILE_SIZE + 1.0f), y * (TILE_SIZE + 1.0f));
-			agk::SetSpriteColor(unitSprites[x][y], 255, 0, 255, 255);
+			agk::SetSpriteColor(unitSprites[x][y], 255, 255, 255, 255);
 			agk::SetSpriteVisible(unitSprites[x][y], 0);
 			agk::SetSpriteDepth(unitSprites[x][y], 10);
 		}
@@ -105,7 +117,6 @@ int app::Loop (void){
 	// will print out the code for the last key pressed in the top left (might have to move the map to see it)
 	agk::Print(agk::GetRawLastKey());
 	agk::Print(currentMap.getUnitOn(cursorX, cursorY).getId());
-	agk::Print((int)images.size());
 
 	// whenever a number is pressed sets its unit id to that number
 	if (agk::GetRawKeyPressed(48) || agk::GetRawKeyPressed(49) || agk::GetRawKeyPressed(50) || agk::GetRawKeyPressed(51) || agk::GetRawKeyPressed(52) || agk::GetRawKeyPressed(53) || agk::GetRawKeyPressed(54) || agk::GetRawKeyPressed(55) || agk::GetRawKeyPressed(56) || agk::GetRawKeyPressed(57)) {
@@ -124,7 +135,7 @@ int app::Loop (void){
 			selected = false;
 		}
 		else {
-			if (currentMap.getUnitOn(cursorX, cursorY).getId() > 0) {	// only toggles if the spot contains a unit
+			if (currentMap.getUnitOn(cursorX, cursorY).getId() > 0) {	// only toggles if the spot contains a unit, need to check if correct player later
 				selectX.push_back(cursorX);
 				selectY.push_back(cursorY);
 				agk::SetSpriteColorRed(gridSprites[selectX[selectX.size() - 1]][selectY[selectY.size() - 1]], 150);
@@ -216,5 +227,5 @@ void app::moveCursor(int up, int down, int left, int right) {
 
 void app::updateUnitSprite(int x, int y) {
 	agk::SetSpriteVisible(unitSprites[x][y], currentMap.getUnitOn(x, y).getId() > 0);
-	agk::SetSpriteImage(unitSprites[x][y], images[currentMap.getUnitOn(x, y).getId()]);
+	agk::SetSpriteImage(unitSprites[x][y], unitImages[currentMap.getUnitOn(x, y).getId()]);
 }

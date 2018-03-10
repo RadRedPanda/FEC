@@ -16,6 +16,7 @@ public:
 	void setUnitOn(int x, int y, int id);
 	void loadMap(std::string fileName);
 	void saveMap(std::string fileName);
+	int getTurn();
 private:
 	int sizeX, sizeY;
 	std::vector<std::vector<int>> terrainMap;
