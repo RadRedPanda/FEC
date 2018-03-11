@@ -14,6 +14,7 @@ public:
 	int getSizeX();
 	int getSizeY();
 	int getCoord(coord c);
+	void setCoord(coord c, int id);
 	unit getUnitOn(coord c);
 	void setUnitOn(coord c, int id);
 	void loadMap(std::string fileName);

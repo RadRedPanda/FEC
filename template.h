@@ -29,6 +29,7 @@ public:
 private:
 	void moveCursor(int up, int down, int left, int right);
 	void spaceBar();
+	void updateTerrainSprite(coord c);
 	void updateUnitSprite(coord c);
 	std::vector<std::vector<UINT>> gridSprites;
 	std::vector<int> tileWeight;

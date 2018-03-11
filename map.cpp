@@ -30,6 +30,10 @@ int map::getCoord(coord c) {
 	return terrainMap[c.x][c.y];
 }
 
+void map::setCoord(coord c, int id) {
+	terrainMap[c.x][c.y] = id;
+}
+
 unit map::getUnitOn(coord c) {
 	return unitMap[c.x][c.y];
 }

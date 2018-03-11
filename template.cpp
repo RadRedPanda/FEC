@@ -127,6 +127,12 @@ int app::Loop (void){
 	agk::Print(agk::GetRawLastKey());
 	agk::Print(currentMap.getUnitOn(cursor).getId());
 
+	// whenever + or - are pressed it changes the terrain 107 189
+	if (agk::GetRawKeyPressed(107) || agk::GetRawKeyPressed(189)) {
+		currentMap.setCoord(cursor, currentMap.getCoord(cursor) + agk::GetRawKeyPressed(107) - agk::GetRawKeyPressed(189));
+		updateTerrainSprite(cursor);
+	}
+
 	// whenever a number is pressed sets its unit id to that number
 	if (agk::GetRawKeyPressed(48) || agk::GetRawKeyPressed(49) || agk::GetRawKeyPressed(50) || agk::GetRawKeyPressed(51) || agk::GetRawKeyPressed(52) || agk::GetRawKeyPressed(53) || agk::GetRawKeyPressed(54) || agk::GetRawKeyPressed(55) || agk::GetRawKeyPressed(56) || agk::GetRawKeyPressed(57)) {
 		currentMap.setUnitOn(cursor, agk::GetRawLastKey() - 48);
@@ -264,6 +270,10 @@ void app::spaceBar() {
 		}
 	}
 	return;
+}
+
+void app::updateTerrainSprite(coord c) {
+	agk::SetSpriteImage(gridSprites[c.x][c.y], terrainImages[currentMap.getCoord(c)]);
 }
 
 void app::updateUnitSprite(coord c) {
