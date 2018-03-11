@@ -7,6 +7,7 @@ public:
 	unit(int type, int team);
 	~unit();
 	int getId();
+	int getMoveDistance();
 	int getTeam();
 private:
 	int id;

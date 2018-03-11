@@ -28,14 +28,18 @@ public:
 	void End( void );
 private:
 	void moveCursor(int up, int down, int left, int right);
+	void spaceBar();
 	void updateUnitSprite(coord c);
 	std::vector<std::vector<UINT>> gridSprites;
+	std::vector<int> tileWeight;
 	std::vector<std::vector<UINT>> unitSprites;
+	std::vector<UINT> canMove;
+	std::vector<UINT> canAttack;
 	std::vector<UINT> terrainImages;
 	std::vector<UINT> unitImages;
 	map currentMap;
 	coord cursor;
-	std::vector<int> selectX, selectY;
+	std::vector<coord> select;
 	UINT cursorSprite;
 	int inputBuffer;
 	bool holdDown;

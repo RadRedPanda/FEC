@@ -102,6 +102,9 @@ void app::Begin(void){
 			agk::SetSpriteDepth(unitSprites[x][y], 10);
 		}
 
+	// how many moves that tile takes to move onto
+	tileWeight = { 1, 1, 2, 2 };
+
 	// chooses sprite for cursor, it should be in the /Final folder
 	cursor.x = cursor.y = 0;
 	cursorSprite = agk::CreateSprite(agk::LoadImage("/sprites/cursor.png"));
@@ -131,24 +134,8 @@ int app::Loop (void){
 	}
 
 	// allows the user to toggle selection
-	if (agk::GetRawKeyPressed(SPACE_BAR)) {
-		if (selected) {
-			while (selectX.size() > 0) {
-				agk::SetSpriteColorRed(gridSprites[selectX[selectX.size() - 1]][selectY[selectY.size() - 1]], 255);
-				selectX.pop_back();
-				selectY.pop_back();
-			}
-			selected = false;
-		}
-		else {
-			if (currentMap.getUnitOn(cursor).getId() > 0) {	// only toggles if the spot contains a unit, need to check if correct player later
-				selectX.push_back(cursor.x);
-				selectY.push_back(cursor.y);
-				agk::SetSpriteColorRed(gridSprites[selectX[selectX.size() - 1]][selectY[selectY.size() - 1]], 150);
-				selected = true;
-			}
-		}
-	}
+	if (agk::GetRawKeyPressed(SPACE_BAR))
+		spaceBar();
 
 	// moves the camera with WASD
 	agk::SetViewOffset(agk::GetViewOffsetX() + CAMERASPEED * (agk::GetRawKeyState(KEY_D) - agk::GetRawKeyState(KEY_A)),	agk::GetViewOffsetY() + CAMERASPEED * (agk::GetRawKeyState(KEY_S) - agk::GetRawKeyState(KEY_W)));
@@ -211,24 +198,72 @@ void app::moveCursor(int up, int down, int left, int right) {
 	// space bar stuff. This does the snake thingy
 	if (selected) {
 		int cross = -1;
-		for (int i = (int)selectX.size() - 2; i >= 0; i-=1) {
-			if (cursor.x == selectX[i] && cursor.y == selectY[i]) {
+		for (int i = (int)select.size() - 2; i >= 0; i-=1) {
+			if (cursor.x == select[i].x && cursor.y == select[i].y) {
 				cross = i;
 				break;
 			}
 		}
 		if (cross >= 0)
-			for (int j = (int)selectX.size() - 1; j > cross; j-=1) {
-				agk::SetSpriteColorRed(gridSprites[selectX[j]][selectY[j]], 255);
-				selectX.pop_back();
-				selectY.pop_back();
+			for (int j = (int)select.size() - 1; j > cross; j-=1) {
+				agk::SetSpriteColorRed(gridSprites[select[j].x][select[j].y], 255);
+				select.pop_back();
 			}
-		else if (cursor.x != selectX[selectX.size() - 1] || cursor.y != selectY[selectY.size() - 1]) {
-			selectX.push_back(cursor.x);
-			selectY.push_back(cursor.y);
+		else if (cursor.x != select[select.size() - 1].x || cursor.y != select[select.size() - 1].y) {
+			select.push_back(cursor);
 			agk::SetSpriteColorRed(gridSprites[cursor.x][cursor.y], 150);
 		}
 	}
+}
+
+// does stuff when space bar is pressed
+void app::spaceBar() {
+	if (selected) {
+		while (select.size() > 0) {
+			agk::SetSpriteColorRed(gridSprites[select[select.size() - 1].x][select[select.size() - 1].y], 255);
+			select.pop_back();
+		}
+		for (int x = 0; x < gridSprites.size(); x += 1)
+			for (int y = 0; y < gridSprites[0].size(); y += 1)
+				agk::SetSpriteColor(gridSprites[x][y], 255, 255, 255, 255);
+		selected = false;
+	}
+	else {
+		if (currentMap.getUnitOn(cursor).getId() > 0) {	// only toggles if the spot contains a unit, need to check if correct player later
+			int moveDistance = currentMap.getUnitOn(cursor).getMoveDistance();
+			std::vector<std::vector<int>> distanceTiles;
+			std::vector<coord> queue;
+			queue.push_back(cursor);
+			distanceTiles.resize(currentMap.getSizeX(), std::vector<int>(currentMap.getSizeY(), -1));
+			distanceTiles[cursor.x][cursor.y] = moveDistance;
+			for (int i = 0; i < queue.size(); i += 1) {
+				if (queue[i].x > 0 && distanceTiles[queue[i].x][queue[i].y] - tileWeight[currentMap.getCoord({ queue[i].x - 1, queue[i].y })] > distanceTiles[queue[i].x - 1][queue[i].y]) {
+					queue.push_back({ queue[i].x - 1, queue[i].y });
+					distanceTiles[queue[i].x - 1][queue[i].y] = distanceTiles[queue[i].x][queue[i].y] - tileWeight[currentMap.getCoord({ queue[i].x - 1, queue[i].y })];
+				}
+				if (queue[i].y > 0 && distanceTiles[queue[i].x][queue[i].y] - tileWeight[currentMap.getCoord({ queue[i].x, queue[i].y - 1 })] > distanceTiles[queue[i].x][queue[i].y - 1]) {
+					queue.push_back({ queue[i].x, queue[i].y - 1 });
+					distanceTiles[queue[i].x][queue[i].y - 1] = distanceTiles[queue[i].x][queue[i].y] - tileWeight[currentMap.getCoord({ queue[i].x, queue[i].y - 1 })];
+				}
+				if (queue[i].x < currentMap.getSizeX() - 1 && distanceTiles[queue[i].x][queue[i].y] - tileWeight[currentMap.getCoord({ queue[i].x + 1, queue[i].y })] > distanceTiles[queue[i].x + 1][queue[i].y]) {
+					queue.push_back({ queue[i].x + 1, queue[i].y });
+					distanceTiles[queue[i].x + 1][queue[i].y] = distanceTiles[queue[i].x][queue[i].y] - tileWeight[currentMap.getCoord({ queue[i].x + 1, queue[i].y })];
+				}
+				if (queue[i].y < currentMap.getSizeY() - 1 && distanceTiles[queue[i].x][queue[i].y] - tileWeight[currentMap.getCoord({ queue[i].x, queue[i].y + 1 })] > distanceTiles[queue[i].x][queue[i].y + 1]) {
+					queue.push_back({ queue[i].x, queue[i].y + 1});
+					distanceTiles[queue[i].x][queue[i].y + 1] = distanceTiles[queue[i].x][queue[i].y] - tileWeight[currentMap.getCoord({ queue[i].x, queue[i].y + 1 })];
+				}
+			}
+			// queue is all the tiles that are within moving distance
+			for (int i = 0; i < queue.size(); i += 1)
+				agk::SetSpriteColorGreen(gridSprites[queue[i].x][queue[i].y], 0);
+
+			select.push_back(cursor);
+			agk::SetSpriteColorRed(gridSprites[select[select.size() - 1].x][select[select.size() - 1].y], 150);
+			selected = true;
+		}
+	}
+	return;
 }
 
 void app::updateUnitSprite(coord c) {
