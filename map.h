@@ -20,6 +20,7 @@ public:
 	void loadMap(std::string fileName);
 	void saveMap(std::string fileName);
 	int getTurn();
+	void moveUnit(coord start, coord end);
 private:
 	coord size;
 	std::vector<std::vector<int>> terrainMap;

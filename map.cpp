@@ -72,3 +72,8 @@ void map::saveMap(std::string fileName) {
 int map::getTurn() {
 	return playerTurn;
 }
+
+void map::moveUnit(coord start, coord end) {
+	unitMap[end.x][end.y] = unitMap[start.x][start.y];
+	unitMap[start.x][start.y] = unit();
+}

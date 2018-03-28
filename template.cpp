@@ -225,7 +225,13 @@ void app::moveCursor(int up, int down, int left, int right) {
 // does stuff when space bar is pressed
 void app::spaceBar() {
 	if (selected) {
-		while (select.size() > 0) {
+		if (select.size() <= currentMap.getUnitOn({ select[0].x, select[0].y }).getMoveDistance() + 1 && select.size() > 1) {
+			currentMap.moveUnit(select[0], select[select.size() - 1]);
+			updateUnitSprite(select[0]);
+			updateUnitSprite(select[select.size() - 1]);
+		}
+
+		while (select.size() > 0) { // 
 			agk::SetSpriteColorRed(gridSprites[select[select.size() - 1].x][select[select.size() - 1].y], 255);
 			select.pop_back();
 		}
